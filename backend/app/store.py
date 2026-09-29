@@ -28,8 +28,14 @@ class Store:
         return None
 
     def overview(self) -> dict[str, object]:
+        # 辅助表（配送单、额度、标准、告警）由航食配餐模块自行汇总，不在这里单列，
+        # 避免配送席待办和配餐台账被重复计数。
+        from app.services.catering import AUX_MODULES
+
         modules: list[dict[str, object]] = []
         for name in self.module_names():
+            if name in AUX_MODULES:
+                continue
             rows = self.rows(name)
             modules.append({
                 "name": name,
